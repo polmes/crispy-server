@@ -31,10 +31,10 @@ $statement = $connection->prepare( $query );
 $statement->bindParam( ':client_file', $client_file );
 $statement->execute();
 
-$rows = $statement->fetchAll();
+$rows = $statement->fetchAll( PDO::FETCH_ASSOC );
 $count = count( $rows );
-// echo "Count: " . $count . "\n";
-// print_r( $rows );
+echo "Count: " . $count . "\n";
+print_r( $rows );
 
 if ( $count == 0 || $count == 1) {
 	if ( $count == 0 ) { // NEW FILE
