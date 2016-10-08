@@ -42,11 +42,11 @@ mysqli_stmt_fetch( $statement );
 mysqli_stmt_close( $statement );
 
 if ( $count == 0 ) {
-	$query = "INSERT INTO user_" . $user . " ( server_file, file_" . $client . " ) VALUES ( ?, ? )";
+	$query = "INSERT INTO user_" . $user . " ( hash, server_file, file_" . $client . " ) VALUES ( ?, ?, ? )";
 	// echo $query;
 
 	$statement = mysqli_prepare( $connection, $query );
-	mysqli_stmt_bind_param( $statement, "ss", $server_file, $client_file );
+	mysqli_stmt_bind_param( $statement, "sss", md5_file( $server_file ), $server_file, $client_file );
 	mysqli_stmt_execute( $statement );
 
 	mysqli_stmt_close( $statement );
