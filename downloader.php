@@ -13,9 +13,9 @@ $statement = $connection->prepare( $query );
 $statement->bindParam( ':client_file', $client_file );
 $statement->execute();
 
-$row = $statement->fetch( PDO::FETCH_ASSOC );
-$server_file = $row['server_file'];
-print_r( $row );
+$rows = $statement->fetchAll();
+$server_file = $rows[0]['server_file'];
+print_r( $rows );
 echo $server_file;
 echo "END\n";
 
