@@ -26,13 +26,12 @@ require_once( 'connect.php' );
 $query = "SELECT id FROM user_" . $user . " WHERE file_" . $client . " = ?";
 echo $query;
 
-if ( $statement = mysqli_prepare( $connection, $query ) ) {
-	mysqli_stmt_bind_param( $statement, "s", $_POST['filePath'] );
-	mysqli_stmt_execute( $statement );
-	mysqli_stmt_bind_result( $statement, $id );
-	print_r( $id );
-	mysqli_stmt_close( $statement );
-	mysqli_close( $connection );
-} else {
-	echo "Prepare failed";
-}
+$statement = mysqli_prepare( $connection, $query );
+mysqli_stmt_bind_param( $statement, "s", $_POST['filePath'] );
+mysqli_stmt_execute( $statement );
+mysqli_stmt_bind_result( $statement, $id );
+print_r( $id );
+mysqli_stmt_close( $statement );
+mysqli_close( $connection );
+
+echo "END";
