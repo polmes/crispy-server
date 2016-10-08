@@ -9,7 +9,6 @@ require_once( 'connect.php' );
 // print_r( $_FILES );
 
 $user = $_POST['username'];		
-$client = $_POST['clientname'];
 $client_file = $_POST['filepath'];
 
 $directory = '/var/www/dev.coderagora.com/crispy-data/user-' . $user . '/';
@@ -24,7 +23,7 @@ $hash = md5_file( $temp_file );
 // echo $hash;
 
 // Check if user table and file column are valid with INFORMATION_SCHEMA
-$query = "SELECT hash, server_file FROM user_" . $user . " WHERE file_" . $client . " = :client_file";
+$query = "SELECT hash, server_file FROM user_" . $user . " WHERE client_file = :client_file";
 // echo $query;
 
 $statement = $connection->prepare( $query );
@@ -41,7 +40,7 @@ if ( $count == 0 || $count == 1) {
 		// Should check size, security, etc.
 		// Writable? ( ! ( is_dir( '/var/www/dev.coderagora.com/crispy-data/' ) && is_writable( '/var/www/dev.coderagora.com/crispy-data/' ) ) )
 		if ( move_uploaded_file( $temp_file, $server_file ) ) {
-			$query = "INSERT INTO user_" . $user . " ( hash, server_file, file_" . $client . " ) VALUES ( :hash, :server_file, :client_file )";
+			$query = "INSERT INTO user_" . $user . " ( hash, server_file, client_file ) VALUES ( :hash, :server_file, :client_file )";
 			// echo $query;
 
 			$statement = $connection->prepare( $query );
