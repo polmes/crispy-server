@@ -13,6 +13,8 @@ $query = "SELECT server_file, file_" . $client . " FROM user_" . $user;
 $result = mysqli_query( $connection, $query );
 while ( $row = mysqli_fetch_assoc( $result ) ) {
 	// print_r( $row );
+	
+	// if null...
 	echo $row['file_' . $client ] . "\t" . filemtime( $row['server_file'] ) . "\n";
 }
 // die...
