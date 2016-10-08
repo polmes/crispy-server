@@ -57,22 +57,22 @@ if ( $count == 0 || $count == 1) {
 		} else die( "There was an unexpected error" );
 	} else { // REPLACE FILE
 		echo "Hash: " . $hash;
-		echo "Result Hash: " . $result['hash'];
-		if ( $hash != $result['hash'] ) {
+		echo "Result Hash: " . $result[0]['hash'];
+		if ( $hash != $result[0]['hash'] ) {
 			echo "FileM: " . filemtime( $temp_file );
-			echo "Result FileM: " . filemtime( $result['server_file'] );
-			if ( filemtime( $temp_file ) > filemtime( $result['server_file'] )  ) {
+			echo "Result FileM: " . filemtime( $result[0]['server_file'] );
+			if ( filemtime( $temp_file ) > filemtime( $result[0]['server_file'] )  ) {
 				if ( move_uploaded_file( $temp_file, $server_file ) ) {
 					$query = "UPDATE user_" . $user . " SET server_file = ? WHERE server_file = ?";
 					echo $query;
 
 					$statement = mysqli_prepare( $connection, $query );
-					mysqli_stmt_bind_param( $statement, "ss", $server_file, $result['server_file'] );
+					mysqli_stmt_bind_param( $statement, "ss", $server_file, $result[0]['server_file'] );
 					mysqli_stmt_execute( $statement );
 
 					mysqli_stmt_close( $statement );
 
-					unlink( $result['server_file'] ); // rm old file
+					unlink( $result[0]['server_file'] ); // rm old file
 				} else die( "There was an unexpected error" );
 			} else die( "Unexpected modified time" );
 		} else die( "Unexpected hash" );
