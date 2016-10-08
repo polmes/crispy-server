@@ -28,8 +28,6 @@ if ( move_uploaded_file( $_FILES['file']['tmp_name'], $server_file ) ) {
 
 /* SAVE INFO IN DB */
 
-
-
 // Check if user is valid
 $query = "SELECT COUNT(*) FROM user_" . $user . " WHERE file_" . $client . " = ?";
 echo $query;
@@ -53,7 +51,7 @@ if ( $count == 0 ) {
 
 	mysqli_stmt_close( $statement );
 } else if ( $count == 1 ) {
-
+	// update according to dates
 } else {
 	die( "How did that happen?" );
 }
