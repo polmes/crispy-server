@@ -6,17 +6,20 @@ ini_set( 'display_errors', 1 );
 print_r( $_POST );
 print_r( $_FILES );
 
+$user = mysqli_real_escape_string( $_POST['username'] );
+$client = mysqli_real_escape_string( $_POST['clientName'] );
+
+$server_file = '/var/www/dev.coderagora.com/crispy-data/user-' . $user . '/' . $_FILES['file']['name'] . '.' . uniqid();
+$client_file = $_POST['filePath'];
+
 // Should check size, security, etc.
-if ( move_uploaded_file( $_FILES['file']['tmp_name'], '/var/www/dev.coderagora.com/crispy-data/' . $_FILES['file']['name'] ) ) {
+if ( move_uploaded_file( $_FILES['file']['tmp_name'], $server_file ) ) {
 	echo "Success!";
 } else if  ( ! ( is_dir( '/var/www/dev.coderagora.com/crispy-data/' ) && is_writable( '/var/www/dev.coderagora.com/crispy-data/' ) ) ) {
 	die( "Write error" );
 } else {
 	die( "There was an unexpected error" );
 }
-
-$user = $_POST['username'];
-$client = $_POST['clientName'];
 
 /* SAVE INFO IN DB */
 
@@ -27,14 +30,27 @@ $query = "SELECT COUNT(*) FROM user_" . $user . " WHERE file_" . $client . " = ?
 echo $query;
 
 $statement = mysqli_prepare( $connection, $query );
-mysqli_stmt_bind_param( $statement, "s", $_POST['filePath'] );
+mysqli_stmt_bind_param( $statement, "s", $client_file );
 mysqli_stmt_execute( $statement );
 
-mysqli_stmt_bind_result( $statement, $id );
+mysqli_stmt_bind_result( $statement, $count );
 mysqli_stmt_fetch( $statement );
-echo $id;
 
 mysqli_stmt_close( $statement );
-mysqli_close( $connection );
 
-echo "END";
+if ( $count == 0 ) {
+	$query = "INSERT INTO user_" . $user . " ( server_file, file_" . $client . " ) VALUES ( ?, ? )";
+	echo $query;
+	
+	$statement = mysqli_prepare( $connection, $query );
+	mysqli_stmt_bind_param( $statement, "ss", $server_file, $client_file );
+	mysqli_stmt_execute( $statement );
+
+	mysqli_stmt_close( $statement );
+} else if ( $count == 1 ) {
+
+} else {
+	die( "How did that happen?" );
+}
+
+mysqli_close( $connection );
