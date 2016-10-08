@@ -36,8 +36,8 @@ mysqli_stmt_bind_result( $statement, $result );
 while ( mysqli_stmt_fetch( $statement ) ) $count++;
 
 echo "Count: " . $count . "\n";
-// echo "Result: " . "\n";
-// print_r( $result );
+echo "Result: " . "\n";
+var_dump( $result );
 
 mysqli_stmt_close( $statement );
 
