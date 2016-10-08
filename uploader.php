@@ -12,8 +12,8 @@ if ( move_uploaded_file( $_FILES['file']['tmp_name'], '/var/www/dev.coderagora.c
 	die( "There was an unexpected error" );
 }
 
-$user = mysqli_real_escape_string( $_POST['username'] );
-$client = mysqli_real_escape_string( $_POST['clientName'] );
+$user = $_POST['username'];
+$client = $_POST['clientName'];
 
 /* SAVE INFO IN DB */
 
@@ -31,5 +31,6 @@ if ( mysqli_stmt_execute( $statement ) ) {
 	$result = mysqli_store_result( $connection );
 	echo mysqli_affected_rows( $connection );
 } else {
+	echo mysqli_error( $connection );
 	echo "No luck";
 }
