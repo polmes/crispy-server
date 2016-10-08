@@ -58,11 +58,12 @@ if ( $count == 0 || $count == 1) {
 			echo "Result FileM: " . filemtime( $rows[0]['server_file'] );
 			if ( filemtime( $temp_file ) > filemtime( $rows[0]['server_file'] )  ) {
 				if ( move_uploaded_file( $temp_file, $server_file ) ) {
-					$query = "UPDATE user_" . $user . " SET server_file = :new_server_file WHERE server_file = :old_server_file";
+					$query = "UPDATE user_" . $user . " SET server_file = :new_server_file, hash = :hash WHERE server_file = :old_server_file";
 					echo $query;
 
 					$statement = $connection->prepare( $query );
 					$statement->bindParam( ':new_server_file', $server_file );
+					$statement->bindParam( ':hash', $hash );
 					$statement->bindParam( ':old_server_file', $rows[0]['server_file'] );
 					$statement->execute();
 
