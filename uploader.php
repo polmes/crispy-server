@@ -5,8 +5,8 @@
 
 require_once( 'connect.php' );
 
-// print_r( $_POST );
-// print_r( $_FILES );
+print_r( $_POST );
+print_r( $_FILES );
 
 $user = $_POST['username'];		
 $client_file = $_POST['filepath'];
@@ -24,7 +24,7 @@ $hash = md5_file( $temp_file );
 
 // Check if user table and file column are valid with INFORMATION_SCHEMA
 $query = "SELECT hash, server_file FROM user_" . $user . " WHERE client_file = :client_file";
-// echo $query;
+echo $query;
 
 $statement = $connection->prepare( $query );
 $statement->bindParam( ':client_file', $client_file );
@@ -32,8 +32,8 @@ $statement->execute();
 
 $rows = $statement->fetchAll( PDO::FETCH_ASSOC );
 $count = count( $rows );
-// echo "Count: " . $count . "\n";
-// print_r( $rows );
+echo "Count: " . $count . "\n";
+print_r( $rows );
 
 if ( $count == 0 || $count == 1) {
 	if ( $count == 0 ) { // NEW FILE
@@ -41,7 +41,7 @@ if ( $count == 0 || $count == 1) {
 		// Writable? ( ! ( is_dir( '/var/www/dev.coderagora.com/crispy-data/' ) && is_writable( '/var/www/dev.coderagora.com/crispy-data/' ) ) )
 		if ( move_uploaded_file( $temp_file, $server_file ) ) {
 			$query = "INSERT INTO user_" . $user . " ( hash, server_file, client_file ) VALUES ( :hash, :server_file, :client_file )";
-			// echo $query;
+			echo $query;
 
 			$statement = $connection->prepare( $query );
 			$statement->bindParam( ':hash', $hash );
@@ -54,7 +54,7 @@ if ( $count == 0 || $count == 1) {
 			if ( filemtime( $temp_file ) > filemtime( $rows[0]['server_file'] )  ) {
 				if ( move_uploaded_file( $temp_file, $server_file ) ) {
 					$query = "UPDATE user_" . $user . " SET server_file = :new_server_file, hash = :hash WHERE server_file = :old_server_file";
-					// echo $query;
+					echo $query;
 
 					$statement = $connection->prepare( $query );
 					$statement->bindParam( ':new_server_file', $server_file );
