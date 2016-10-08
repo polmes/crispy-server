@@ -41,13 +41,15 @@ if ( $count == 0 || $count == 1) {
 		// Writable? ( ! ( is_dir( '/var/www/dev.coderagora.com/crispy-data/' ) && is_writable( '/var/www/dev.coderagora.com/crispy-data/' ) ) )
 		if ( move_uploaded_file( $temp_file, $server_file ) ) {
 			$query = "SELECT app FROM apps WHERE default_file = :default_file";
+			// echo $query;
+
 			$statement = $connection->prepare( $query );
 			$statement->bindParam( ':default_file', $client_file );
 			$statement->execute();
 			$rows = $statement->fetchAll( PDO::FETCH_ASSOC );
-
+			
 			$app = null;
-			if ( count( $rows ) == 1 ) $app = $rows['app'];
+			if ( count( $rows ) == 1 ) $app = $rows[0]['app'];
 			else if ( count( $rows ) > 1 ) die( "Cannot have more than one file per path" );
 
 			$query = "INSERT INTO user_" . $user . " ( app, hash, server_file, client_file ) VALUES ( :app, :hash, :server_file, :client_file )";
