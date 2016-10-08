@@ -22,7 +22,7 @@ $hash = md5_file( $temp_file );
 
 // Check if user table and file column are valid with INFORMATION_SCHEMA
 $query = "SELECT hash, server_file FROM user_" . $user . " WHERE file_" . $client . " = ?";
-// echo $query;
+echo $query;
 
 $statement = $connection->prepare( $query );
 $statement->bindParam( 1, $client_file );
@@ -32,6 +32,7 @@ $rows = $statement->fetchAll();
 $count = count( $rows );
 echo "Count: " . $count . "\n";
 print_r( $rows );
+var_dump( $rows );
 
 if ( $count == 0 || $count == 1) {
 	if ( $count == 0 ) { // NEW FILE
