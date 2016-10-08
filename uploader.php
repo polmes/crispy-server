@@ -27,7 +27,6 @@ $query = "SELECT id FROM user_" . $user . " WHERE file_" . $client . " = ?";
 echo $query;
 $statement = mysqli_prepare( $connection, $query );
 mysqli_stmt_bind_param( $statement, "s", $_POST['filePath'] );
-echo $statement;
 echo mysqli_error( $connection );
 if ( mysqli_stmt_execute( $statement ) ) {
 	echo "If";
