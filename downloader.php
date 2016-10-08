@@ -1,10 +1,6 @@
 <?php
 
-/**
- * inputs: client path -> server_path -> download
- */
-
-/*require_once( 'connect.php' );
+require_once( 'connect.php' );
 
 $user = mysqli_real_escape_string( $connection, $_POST['username'] );
 $client = mysqli_real_escape_string( $connection, $_POST['clientname'] );
@@ -20,7 +16,7 @@ mysqli_stmt_execute( $statement );
 mysqli_stmt_bind_result( $statement, $server_file );
 mysqli_stmt_fetch( $statement );
 
-mysqli_stmt_close( $statement );*/
+mysqli_stmt_close( $statement );
 
 $server_file = '/var/www/dev.coderagora.com/crispy-data/user-crispy/test2.txt.57f8ca70890ff';
 if ( file_exists( $server_file ) ) {
