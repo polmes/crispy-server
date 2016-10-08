@@ -8,9 +8,6 @@ require_once( 'connect.php' );
 // print_r( $_POST );
 // print_r( $_FILES );
 
-$user = mysqli_real_escape_string( $connection, $_POST['username'] );
-$client = mysqli_real_escape_string( $connection, $_POST['clientname'] );
-
 $directory = '/var/www/dev.coderagora.com/crispy-data/user-' . $user . '/';
 if ( ! is_dir( $directory ) ) {
 	mkdir( $directory );
@@ -23,23 +20,18 @@ $client_file = $_POST['filepath'];
 $hash = md5_file( $temp_file );
 // echo $hash;
 
-// Check if user is valid
-$query = "SELECT server_file, hash FROM user_" . $user . " WHERE file_" . $client . " = ?";
+// Check if user table and file column are valid with INFORMATION_SCHEMA
+$query = "SELECT hash, server_file FROM user_" . $user . " WHERE file_" . $client . " = ?";
 // echo $query;
 
-$statement = mysqli_prepare( $connection, $query );
-mysqli_stmt_bind_param( $statement, "s", $client_file );
-mysqli_stmt_execute( $statement );
+$statement = $connection->prepare( $query );
+$statement->bindParam( 1, $client_file );
+$statement->execute();
 
-$count = 0;
-mysqli_stmt_bind_result( $statement, $result );
-if ( mysqli_stmt_fetch( $statement ) ) $count++;
-
+$rows = $statement->fetchAll();
+$count = count( $rows );
 echo "Count: " . $count . "\n";
-echo "Result: " . "\n";
-var_dump( $result );
-
-mysqli_stmt_close( $statement );
+print_r( $rows );
 
 if ( $count == 0 || $count == 1) {
 	if ( $count == 0 ) { // NEW FILE
@@ -49,13 +41,21 @@ if ( $count == 0 || $count == 1) {
 			$query = "INSERT INTO user_" . $user . " ( hash, server_file, file_" . $client . " ) VALUES ( ?, ?, ? )";
 			// echo $query;
 
-			$statement = mysqli_prepare( $connection, $query );
-			mysqli_stmt_bind_param( $statement, "sss", $hash, $server_file, $client_file );
-			mysqli_stmt_execute( $statement );
-
-			mysqli_stmt_close( $statement );
+			$statement = $connection->prepare( $query );
+			$statement->bindParam( 1, $hash );
+			$statement->bindParam( 2, $server_file );
+			$statement->bindParam( 3, $client_file );
+			$statement->execute();
 		} else die( "There was an unexpected error" );
 	} else { // REPLACE FILE
+		/*$query = "SELECT hash, server_file FROM user_" . $user . " WHERE file_" . $client . " = ?";
+		// echo $query;
+
+		$statement = $connection->prepare( $query );
+		$statement->bindParam( 1, $client_file );
+		$statement->execute();
+
+		$count = $statement->fetch();
 		echo "Hash: " . $hash;
 		echo "Result Hash: " . $result['hash'];
 		if ( $hash != $result['hash'] ) {
@@ -75,8 +75,6 @@ if ( $count == 0 || $count == 1) {
 					unlink( $result['server_file'] ); // rm old file
 				} else die( "There was an unexpected error" );
 			} else die( "Unexpected modified time" );
-		} else die( "Unexpected hash" );
+		} else die( "Unexpected hash" );*/
 	}
 } else die( "How did that happen?" );
-
-mysqli_close( $connection );
