@@ -19,8 +19,8 @@ if ( count( $rows ) > 1 ) {
 }
 
 $server_file = $rows[0]['server_file'];
-echo $server_file;
-print_r( $rows );
+// echo $server_file;
+// print_r( $rows );
 
 if ( file_exists( $server_file ) ) {
 	// header( 'Accept-Ranges: bytes' ); // if we wanted resumable downloads, but files too small
