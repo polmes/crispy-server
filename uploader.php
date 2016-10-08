@@ -23,7 +23,7 @@ $client = $_POST['clientName'];
 require_once( 'connect.php' );
 
 // Check if user is valid
-$query = "SELECT id FROM user_" . $user . " WHERE file_" . $client . " = ?";
+$query = "SELECT COUNT(*) FROM user_" . $user . " WHERE file_" . $client . " = ?";
 echo $query;
 
 $statement = mysqli_prepare( $connection, $query );
@@ -31,9 +31,8 @@ mysqli_stmt_bind_param( $statement, "s", $_POST['filePath'] );
 mysqli_stmt_execute( $statement );
 
 mysqli_stmt_bind_result( $statement, $id );
-while ( mysqli_stmt_fetch( $statement ) ) {
-	echo $id;
-}
+mysqli_stmt_fetch( $statement );
+echo $id;
 
 mysqli_stmt_close( $statement );
 mysqli_close( $connection );
