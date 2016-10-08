@@ -25,5 +25,6 @@ $statement = mysqli_prepare( $connection, $query );
 mysqli_stmt_bind_param( $statement, "s", $_POST['filePath'] );
 
 if ( mysqli_stmt_execute( $statement ) ) {
+	$result = mysqli_store_result( $connection );
 	echo mysqli_affected_rows( $connection );
 }
