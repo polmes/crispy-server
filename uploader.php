@@ -41,9 +41,11 @@ mysqli_stmt_bind_param( $statement, "s", $client_file );
 mysqli_stmt_execute( $statement );
 
 mysqli_stmt_bind_result( $statement, $result );
-mysqli_stmt_fetch( $statement );
 
-$count = mysqli_stmt_num_rows( $statement );
+$count = 0;
+while ( mysqli_stmt_fetch( $statement ) ) $count++;
+
+// $count = mysqli_stmt_num_rows( $statement );
 echo "Count: " . $count . "\n";
 echo "Result: " . $result['server_file'] . "\n";
 
