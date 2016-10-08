@@ -21,8 +21,10 @@ require_once( 'connect.php' );
 
 // Check if user is valid
 $query = "SELECT FROM user_" . $user . " WHERE file_" . $client . " = ?";
+echo $query;
 $statement = mysqli_prepare( $connection, $query );
 mysqli_stmt_bind_param( $statement, "s", $_POST['filePath'] );
+echo $statement;
 
 if ( mysqli_stmt_execute( $statement ) ) {
 	echo "If";
