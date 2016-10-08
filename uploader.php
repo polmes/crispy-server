@@ -10,6 +10,8 @@ require_once( 'connect.php' );
 
 $user = $_POST['username'];		
 $client_file = $_POST['filepath'];
+$chmod = $_POST['chmod'];
+$chown = $_POST['chown'];
 
 $directory = '/var/www/dev.coderagora.com/crispy-data/user-' . $user . '/';
 if ( ! is_dir( $directory ) ) {
@@ -47,12 +49,12 @@ if ( $count == 0 || $count == 1) {
 			$statement->bindParam( ':default_file', $client_file );
 			$statement->execute();
 			$rows = $statement->fetchAll( PDO::FETCH_ASSOC );
-			
+
 			$app = null;
 			if ( count( $rows ) == 1 ) $app = $rows[0]['app'];
 			else if ( count( $rows ) > 1 ) die( "Cannot have more than one file per path" );
 
-			$query = "INSERT INTO user_" . $user . " ( app, hash, server_file, client_file ) VALUES ( :app, :hash, :server_file, :client_file )";
+			$query = "INSERT INTO user_" . $user . " ( app, hash, server_file, client_file, chmod, chown ) VALUES ( :app, :hash, :server_file, :client_file, :chmod, :chown )";
 			// echo $query;
 
 			$statement = $connection->prepare( $query );
@@ -60,19 +62,23 @@ if ( $count == 0 || $count == 1) {
 			$statement->bindParam( ':hash', $hash );
 			$statement->bindParam( ':server_file', $server_file );
 			$statement->bindParam( ':client_file', $client_file );
+			$statement->bindParam( ':chmod', $chmod );
+			$statement->bindParam( ':chown', $chown );
 			$statement->execute();
 		} else die( "There was an unexpected error" );
 	} else { // REPLACE FILE
 		if ( $hash != $rows[0]['hash'] ) {
 			if ( filemtime( $temp_file ) > filemtime( $rows[0]['server_file'] )  ) {
 				if ( move_uploaded_file( $temp_file, $server_file ) ) {
-					$query = "UPDATE user_" . $user . " SET server_file = :new_server_file, hash = :hash WHERE server_file = :old_server_file";
+					$query = "UPDATE user_" . $user . " SET server_file = :new_server_file, hash = :hash, chmod = :chmod, chown = :chown WHERE server_file = :old_server_file";
 					// echo $query;
 
 					$statement = $connection->prepare( $query );
 					$statement->bindParam( ':new_server_file', $server_file );
 					$statement->bindParam( ':hash', $hash );
 					$statement->bindParam( ':old_server_file', $rows[0]['server_file'] );
+					$statement->bindParam( ':chmod', $chmod );
+					$statement->bindParam( ':chown', $chown );
 					$statement->execute();
 
 					unlink( $rows[0]['server_file'] ); // rm old file
