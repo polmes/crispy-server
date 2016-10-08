@@ -16,12 +16,14 @@ if ( ! is_dir( $directory ) ) {
 	mkdir( $directory );
 }
 
+$temp_file = $_FILES['file']['tmp_name'];
 $server_file = $directory . $_FILES['file']['name'] . '.' . uniqid();
 $client_file = $_POST['filepath'];
-$hash = md5_file( $server_file );
+$hash = md5_file( $temp_file );
+echo $hash;
 
 // Should check size, security, etc.
-if ( move_uploaded_file( $_FILES['file']['tmp_name'], $server_file ) ) {
+if ( move_uploaded_file( $temp_file, $server_file ) ) {
 	// echo "Success!";
 /*} else if  ( ! ( is_dir( '/var/www/dev.coderagora.com/crispy-data/' ) && is_writable( '/var/www/dev.coderagora.com/crispy-data/' ) ) ) {
 	die( "Write error" );*/
