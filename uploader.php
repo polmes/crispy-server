@@ -35,7 +35,7 @@ $count = 0;
 mysqli_stmt_bind_result( $statement, $result );
 while ( mysqli_stmt_fetch( $statement ) ) $count++;
 
-// echo "Count: " . $count . "\n";
+echo "Count: " . $count . "\n";
 // echo "Result: " . "\n";
 // print_r( $result );
 
@@ -56,8 +56,12 @@ if ( $count == 0 || $count == 1) {
 			mysqli_stmt_close( $statement );
 		} else die( "There was an unexpected error" );
 	} else { // REPLACE FILE
+		echo "Hash: " . $hash;
+		echo "Result Hash: " . $result['hash'];
 		if ( $hash != $result['hash'] ) {
-			if ( filemtime( $temp_file  ) > filemtime( $result['server_file'] )  ) {
+			echo "FileM: " . filemtime( $temp_file );
+			echo "Result FileM: " . filemtime( $result['server_file'] );
+			if ( filemtime( $temp_file ) > filemtime( $result['server_file'] )  ) {
 				if ( move_uploaded_file( $temp_file, $server_file ) ) {
 					$query = "UPDATE user_" . $user . " SET server_file = ? WHERE server_file = ?";
 					echo $query;
