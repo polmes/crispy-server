@@ -18,6 +18,7 @@ if ( ! is_dir( $directory ) ) {
 
 $server_file = $directory . $_FILES['file']['name'] . '.' . uniqid();
 $client_file = $_POST['filePath'];
+$hash = md5_file( $server_file );
 
 // Should check size, security, etc.
 if ( move_uploaded_file( $_FILES['file']['tmp_name'], $server_file ) ) {
@@ -46,7 +47,7 @@ if ( $count == 0 ) {
 	// echo $query;
 
 	$statement = mysqli_prepare( $connection, $query );
-	mysqli_stmt_bind_param( $statement, "sss", md5_file( $server_file ), $server_file, $client_file );
+	mysqli_stmt_bind_param( $statement, "sss", $hash, $server_file, $client_file );
 	mysqli_stmt_execute( $statement );
 
 	mysqli_stmt_close( $statement );
