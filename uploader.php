@@ -29,8 +29,12 @@ echo $query;
 $statement = mysqli_prepare( $connection, $query );
 mysqli_stmt_bind_param( $statement, "s", $_POST['filePath'] );
 mysqli_stmt_execute( $statement );
+
 mysqli_stmt_bind_result( $statement, $id );
-print_r( $id );
+while ( mysqli_stmt_fetch( $statement ) ) {
+	echo $id;
+}
+
 mysqli_stmt_close( $statement );
 mysqli_close( $connection );
 
