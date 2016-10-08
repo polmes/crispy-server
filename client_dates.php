@@ -13,7 +13,8 @@ echo $query . "\n";
 $result = mysqli_query( $connection, $query );
 while ( $row = mysqli_fetch_assoc( $result ) ) {
 	// print_r( $row );
-	echo $row . "\n";
+	$client_file = $row['file_' . $client];
+	echo $client_file . "\t" . filemtime( $client_file ) . "\n";
 }
 
 mysqli_close( $connection );
