@@ -24,61 +24,51 @@ $hash = md5_file( $temp_file );
 // echo $hash;
 
 // Check if user table and file column are valid with INFORMATION_SCHEMA
-$query = "SELECT hash, server_file FROM user_" . $user . " WHERE file_" . $client . " = ?";
-echo $query;
+$query = "SELECT hash, server_file FROM user_" . $user . " WHERE file_" . $client . " = :client_file";
+// echo $query;
 
 $statement = $connection->prepare( $query );
-$statement->bindParam( 1, $client_file );
+$statement->bindParam( ':client_file', $client_file );
 $statement->execute();
 
 $rows = $statement->fetchAll();
 $count = count( $rows );
-echo "Count: " . $count . "\n";
-print_r( $rows );
-var_dump( $rows );
+// echo "Count: " . $count . "\n";
+// print_r( $rows );
 
 if ( $count == 0 || $count == 1) {
 	if ( $count == 0 ) { // NEW FILE
 		// Should check size, security, etc.
 		// Writable? ( ! ( is_dir( '/var/www/dev.coderagora.com/crispy-data/' ) && is_writable( '/var/www/dev.coderagora.com/crispy-data/' ) ) )
 		if ( move_uploaded_file( $temp_file, $server_file ) ) {
-			$query = "INSERT INTO user_" . $user . " ( hash, server_file, file_" . $client . " ) VALUES ( ?, ?, ? )";
+			$query = "INSERT INTO user_" . $user . " ( hash, server_file, file_" . $client . " ) VALUES ( :hash, :server_file, :client_file )";
 			// echo $query;
 
 			$statement = $connection->prepare( $query );
-			$statement->bindParam( 1, $hash );
-			$statement->bindParam( 2, $server_file );
-			$statement->bindParam( 3, $client_file );
+			$statement->bindParam( ':hash', $hash );
+			$statement->bindParam( ':server_file', $server_file );
+			$statement->bindParam( ':client_file', $client_file );
 			$statement->execute();
 		} else die( "There was an unexpected error" );
 	} else { // REPLACE FILE
-		/*$query = "SELECT hash, server_file FROM user_" . $user . " WHERE file_" . $client . " = ?";
-		// echo $query;
-
-		$statement = $connection->prepare( $query );
-		$statement->bindParam( 1, $client_file );
-		$statement->execute();
-
-		$count = $statement->fetch();
 		echo "Hash: " . $hash;
-		echo "Result Hash: " . $result['hash'];
-		if ( $hash != $result['hash'] ) {
+		echo "Result Hash: " . $rows[0]['hash'];
+		if ( $hash != $rows[0]['hash'] ) {
 			echo "FileM: " . filemtime( $temp_file );
-			echo "Result FileM: " . filemtime( $result['server_file'] );
-			if ( filemtime( $temp_file ) > filemtime( $result['server_file'] )  ) {
+			echo "Result FileM: " . filemtime( $rows[0]['server_file'] );
+			if ( filemtime( $temp_file ) > filemtime( $rows[0]['server_file'] )  ) {
 				if ( move_uploaded_file( $temp_file, $server_file ) ) {
-					$query = "UPDATE user_" . $user . " SET server_file = ? WHERE server_file = ?";
+					$query = "UPDATE user_" . $user . " SET server_file = :new_server_file WHERE server_file = :old_server_file";
 					echo $query;
 
-					$statement = mysqli_prepare( $connection, $query );
-					mysqli_stmt_bind_param( $statement, "ss", $server_file, $result['server_file'] );
-					mysqli_stmt_execute( $statement );
+					$statement = $connection->prepare( $query );
+					$statement->bindParam( ':new_server_file', $server_file );
+					$statement->bindParam( ':old_server_file', $rows[0]['server_file'] );
+					$statement->execute();
 
-					mysqli_stmt_close( $statement );
-
-					unlink( $result['server_file'] ); // rm old file
+					unlink( $rows[0]['server_file'] ); // rm old file
 				} else die( "There was an unexpected error" );
 			} else die( "Unexpected modified time" );
-		} else die( "Unexpected hash" );*/
+		} else die( "Unexpected hash" );
 	}
 } else die( "How did that happen?" );
