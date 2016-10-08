@@ -11,17 +11,20 @@ print_r( $_FILES );
 $user = mysqli_real_escape_string( $connection, $_POST['username'] );
 $client = mysqli_real_escape_string( $connection, $_POST['clientName'] );
 
-$server_file = '/var/www/dev.coderagora.com/crispy-data/user-' . $user . '/' . $_FILES['file']['name'] . '.' . uniqid();
+$directory = '/var/www/dev.coderagora.com/crispy-data/user-' . $user . '/';
+if ( ! is_dir( $directory ) ) {
+	mkdir( $directory );
+}
+
+$server_file = $directory . $_FILES['file']['name'] . '.' . uniqid();
 $client_file = $_POST['filePath'];
 
 // Should check size, security, etc.
 if ( move_uploaded_file( $_FILES['file']['tmp_name'], $server_file ) ) {
 	echo "Success!";
-} else if  ( ! ( is_dir( '/var/www/dev.coderagora.com/crispy-data/' ) && is_writable( '/var/www/dev.coderagora.com/crispy-data/' ) ) ) {
-	die( "Write error" );
-} else {
-	die( "There was an unexpected error" );
-}
+/*} else if  ( ! ( is_dir( '/var/www/dev.coderagora.com/crispy-data/' ) && is_writable( '/var/www/dev.coderagora.com/crispy-data/' ) ) ) {
+	die( "Write error" );*/
+} else die( "There was an unexpected error" );
 
 /* SAVE INFO IN DB */
 
