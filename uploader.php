@@ -17,7 +17,7 @@ if ( ! is_dir( $directory ) ) {
 }
 
 $server_file = $directory . $_FILES['file']['name'] . '.' . uniqid();
-$client_file = $_POST['filePath'];
+$client_file = $_POST['filepath'];
 $hash = md5_file( $server_file );
 
 // Should check size, security, etc.
@@ -52,6 +52,7 @@ if ( $count == 0 ) {
 
 	mysqli_stmt_close( $statement );
 } else if ( $count == 1 ) {
+	// WE NEED TO REPLACE FILE
 	// update according to dates
 } else {
 	die( "How did that happen?" );
