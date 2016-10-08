@@ -23,4 +23,4 @@ if ( file_exists( $server_file ) ) {
 	header( 'Content-Length: ' . filesize( $server_file ) );
 	readfile( $server_file );
 	// exit;
-} else die( "File doesn't exist" );
+} else { print_r( $row ); die( "File doesn't exist" ); }
