@@ -10,6 +10,7 @@ require_once( 'connect.php' );
 
 $user = $_POST['username'];		
 $client = $_POST['clientname'];
+$client_file = $_POST['filepath'];
 
 $directory = '/var/www/dev.coderagora.com/crispy-data/user-' . $user . '/';
 if ( ! is_dir( $directory ) ) {
@@ -18,7 +19,6 @@ if ( ! is_dir( $directory ) ) {
 
 $temp_file = $_FILES['file']['tmp_name'];
 $server_file = $directory . $_FILES['file']['name'] . '.' . uniqid();
-$client_file = $_POST['filepath'];
 
 $hash = md5_file( $temp_file );
 // echo $hash;
@@ -51,15 +51,11 @@ if ( $count == 0 || $count == 1) {
 			$statement->execute();
 		} else die( "There was an unexpected error" );
 	} else { // REPLACE FILE
-		echo "Hash: " . $hash;
-		echo "Result Hash: " . $rows[0]['hash'];
 		if ( $hash != $rows[0]['hash'] ) {
-			echo "FileM: " . filemtime( $temp_file );
-			echo "Result FileM: " . filemtime( $rows[0]['server_file'] );
 			if ( filemtime( $temp_file ) > filemtime( $rows[0]['server_file'] )  ) {
 				if ( move_uploaded_file( $temp_file, $server_file ) ) {
 					$query = "UPDATE user_" . $user . " SET server_file = :new_server_file, hash = :hash WHERE server_file = :old_server_file";
-					echo $query;
+					// echo $query;
 
 					$statement = $connection->prepare( $query );
 					$statement->bindParam( ':new_server_file', $server_file );
