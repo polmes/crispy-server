@@ -8,6 +8,9 @@ require_once( 'connect.php' );
 // print_r( $_POST );
 // print_r( $_FILES );
 
+$user = $_POST['username'];		
+$client = $_POST['clientname'];
+
 $directory = '/var/www/dev.coderagora.com/crispy-data/user-' . $user . '/';
 if ( ! is_dir( $directory ) ) {
 	mkdir( $directory );
