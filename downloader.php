@@ -14,7 +14,7 @@ $statement->bindParam( ':client_file', $client_file );
 $statement->execute();
 
 $row = $statement->fetch( PDO::FETCH_ASSOC );
-print_r( $row );
+$server_file = $row['server_file'];
 
 if ( file_exists( $server_file ) ) {
 	// header( 'Accept-Ranges: bytes' ); // if we wanted resumable downloads, but files too small
@@ -23,4 +23,4 @@ if ( file_exists( $server_file ) ) {
 	header( 'Content-Length: ' . filesize( $server_file ) );
 	readfile( $server_file );
 	// exit;
-} else { print_r( $row ); die( "File doesn't exist" ); }
+} else die( "File doesn't exist" );
