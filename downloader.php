@@ -18,7 +18,6 @@ mysqli_stmt_fetch( $statement );
 
 mysqli_stmt_close( $statement );
 
-$server_file = '/var/www/dev.coderagora.com/crispy-data/user-crispy/test2.txt.57f8ca70890ff';
 if ( file_exists( $server_file ) ) {
 	// header( 'Accept-Ranges: bytes' ); // if we wanted resumable downloads, but files too small
 	header( 'Content-Type: application/octet-stream' ); // generic MIME
