@@ -6,7 +6,7 @@ $user = $_POST['username'];
 $client = $_POST['clientname'];
 $client_file = $_POST['filepath'];
 
-$query = "SELECT server_file FROM user_" . $user . " WHERE file_" . $client . " = ?";
+$query = "SELECT server_file FROM user_" . $user . " WHERE file_" . $client . " = :client_file";
 // echo $query;
 
 $statement = $connection->prepare( $query );
