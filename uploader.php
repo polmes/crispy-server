@@ -45,7 +45,7 @@ mysqli_stmt_fetch( $statement );
 
 $count = mysqli_stmt_num_rows( $statement );
 echo "Count: " . $count . "\n";
-echo "Result: " . print_r( $result ) . "\n";
+echo "Result: " . $result['server_file'] . "\n";
 
 mysqli_stmt_close( $statement );
 
