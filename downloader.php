@@ -2,21 +2,19 @@
 
 require_once( 'connect.php' );
 
-$user = mysqli_real_escape_string( $connection, $_POST['username'] );
-$client = mysqli_real_escape_string( $connection, $_POST['clientname'] );
+$user = $_POST['username'];
+$client = $_POST['clientname'];
 $client_file = $_POST['filepath'];
 
 $query = "SELECT server_file FROM user_" . $user . " WHERE file_" . $client . " = ?";
 // echo $query;
 
-$statement = mysqli_prepare( $connection, $query );
-mysqli_stmt_bind_param( $statement, "s", $client_file );
-mysqli_stmt_execute( $statement );
+$statement = $connection->prepare( $query );
+$statement->bindParam( ':client_file', $client_file );
+$statement->execute();
 
-mysqli_stmt_bind_result( $statement, $server_file );
-mysqli_stmt_fetch( $statement );
-
-mysqli_stmt_close( $statement );
+$row = $statement->fetch( PDO::FETCH_ASSOC );
+print_r( $row );
 
 if ( file_exists( $server_file ) ) {
 	// header( 'Accept-Ranges: bytes' ); // if we wanted resumable downloads, but files too small
