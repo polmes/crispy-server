@@ -23,51 +23,56 @@ $client_file = $_POST['filepath'];
 $hash = md5_file( $temp_file );
 // echo $hash;
 
-// Should check size, security, etc.
-if ( move_uploaded_file( $temp_file, $server_file ) ) {
-	// echo "Success!";
-/*} else if  ( ! ( is_dir( '/var/www/dev.coderagora.com/crispy-data/' ) && is_writable( '/var/www/dev.coderagora.com/crispy-data/' ) ) ) {
-	die( "Write error" );*/
-} else die( "There was an unexpected error" );
-
-/* SAVE INFO IN DB */
-
 // Check if user is valid
-$query = "SELECT server_file FROM user_" . $user . " WHERE file_" . $client . " = ?";
+$query = "SELECT server_file, hash FROM user_" . $user . " WHERE file_" . $client . " = ?";
 // echo $query;
 
 $statement = mysqli_prepare( $connection, $query );
 mysqli_stmt_bind_param( $statement, "s", $client_file );
 mysqli_stmt_execute( $statement );
 
-mysqli_stmt_bind_result( $statement, $result );
-
 $count = 0;
+mysqli_stmt_bind_result( $statement, $result );
 while ( mysqli_stmt_fetch( $statement ) ) $count++;
 
-// $count = mysqli_stmt_num_rows( $statement );
-echo "Count: " . $count . "\n";
-echo "Result: " . "\n";
-print_r( $result );
+// echo "Count: " . $count . "\n";
+// echo "Result: " . "\n";
+// print_r( $result );
 
 mysqli_stmt_close( $statement );
 
-if ( $count == 0 ) {
-	$query = "INSERT INTO user_" . $user . " ( hash, server_file, file_" . $client . " ) VALUES ( ?, ?, ? )";
-	// echo $query;
+if ( $count == 0 || $count == 1) {
+	if ( $count == 0 ) { // NEW FILE
+		// Should check size, security, etc.
+		// Writable? ( ! ( is_dir( '/var/www/dev.coderagora.com/crispy-data/' ) && is_writable( '/var/www/dev.coderagora.com/crispy-data/' ) ) )
+		if ( move_uploaded_file( $temp_file, $server_file ) ) {
+			$query = "INSERT INTO user_" . $user . " ( hash, server_file, file_" . $client . " ) VALUES ( ?, ?, ? )";
+			// echo $query;
 
-	$statement = mysqli_prepare( $connection, $query );
-	mysqli_stmt_bind_param( $statement, "sss", $hash, $server_file, $client_file );
-	mysqli_stmt_execute( $statement );
+			$statement = mysqli_prepare( $connection, $query );
+			mysqli_stmt_bind_param( $statement, "sss", $hash, $server_file, $client_file );
+			mysqli_stmt_execute( $statement );
 
-	mysqli_stmt_close( $statement );
-} else if ( $count == 1 ) {
-	// WE NEED TO REPLACE FILE ( uploaded should be newer )
-	// update according to date
+			mysqli_stmt_close( $statement );
+		} else die( "There was an unexpected error" );
+	} else { // REPLACE FILE
+		if ( $hash != $result['hash'] ) {
+			if ( filemtime( $temp_file  ) > filemtime( $result['server_file'] )  ) {
+				if ( move_uploaded_file( $temp_file, $server_file ) ) {
+					$query = "UPDATE user_" . $user . " SET server_file = ? WHERE server_file = ?";
+					echo $query;
 
+					$statement = mysqli_prepare( $connection, $query );
+					mysqli_stmt_bind_param( $statement, "ss", $server_file, $result['server_file'] );
+					mysqli_stmt_execute( $statement );
 
-} else {
-	die( "How did that happen?" );
-}
+					mysqli_stmt_close( $statement );
+
+					unlink( $result['server_file'] ); // rm old file
+				} else die( "There was an unexpected error" );
+			} else die( "Unexpected modified time" );
+		} else die( "Unexpected hash" );
+	}
+} else die( "How did that happen?" );
 
 mysqli_close( $connection );
