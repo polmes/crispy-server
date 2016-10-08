@@ -42,10 +42,10 @@ if ( $count == 0 || $count == 1) {
 		if ( move_uploaded_file( $temp_file, $server_file ) ) {
 			$query = "SELECT app FROM apps WHERE default_file = :default_file";
 			$statement = $connection->prepare( $query );
-			$statement->bindParam( ':default_file', $default_file );
+			$statement->bindParam( ':default_file', $client_file );
 			$statement->execute();
 			$rows = $statement->fetchAll( PDO::FETCH_ASSOC );
-			
+
 			$app = null;
 			if ( count( $rows ) == 1 ) $app = $rows['app'];
 			else if ( count( $rows ) > 1 ) die( "Cannot have more than one file per path" );
