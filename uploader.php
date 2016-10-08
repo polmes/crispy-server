@@ -9,7 +9,7 @@ print_r( $_POST );
 print_r( $_FILES );
 
 $user = mysqli_real_escape_string( $connection, $_POST['username'] );
-$client = mysqli_real_escape_string( $connection, $_POST['clientName'] );
+$client = mysqli_real_escape_string( $connection, $_POST['clientname'] );
 
 $directory = '/var/www/dev.coderagora.com/crispy-data/user-' . $user . '/';
 if ( ! is_dir( $directory ) ) {
