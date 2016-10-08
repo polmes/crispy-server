@@ -11,7 +11,7 @@ $query = "SELECT server_file, file_" . $client . " FROM user_" . $user;
 echo $query . "\n";
 
 $result = mysqli_query( $connection, $query );
-while ( $row = mysqli_fetch_array( $result ) ) {
+while ( $row = mysqli_fetch_assoc( $result ) ) {
 	// print_r( $row );
 	echo $row . "\n";
 }
