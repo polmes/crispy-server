@@ -12,7 +12,7 @@ echo $query . '\n';
 
 $result = mysqli_query( $connection, $query );
 while ( $row = mysqli_fetch_array( $result ) ) {
-	echo $row . '\n';
+	print_r( $row );
 }
 
 mysqli_close( $connection );
