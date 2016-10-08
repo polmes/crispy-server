@@ -1,7 +1,7 @@
 <?php
 
-error_reporting( E_ALL );
-ini_set( 'display_errors', 1 );
+// error_reporting( E_ALL );
+// ini_set( 'display_errors', 1 );
 
 require_once( 'connect.php' );
 
@@ -19,8 +19,9 @@ if ( ! is_dir( $directory ) ) {
 $temp_file = $_FILES['file']['tmp_name'];
 $server_file = $directory . $_FILES['file']['name'] . '.' . uniqid();
 $client_file = $_POST['filepath'];
+
 $hash = md5_file( $temp_file );
-echo $hash;
+// echo $hash;
 
 // Should check size, security, etc.
 if ( move_uploaded_file( $temp_file, $server_file ) ) {
@@ -32,15 +33,19 @@ if ( move_uploaded_file( $temp_file, $server_file ) ) {
 /* SAVE INFO IN DB */
 
 // Check if user is valid
-$query = "SELECT COUNT(*) FROM user_" . $user . " WHERE file_" . $client . " = ?";
+$query = "SELECT server_file FROM user_" . $user . " WHERE file_" . $client . " = ?";
 // echo $query;
 
 $statement = mysqli_prepare( $connection, $query );
 mysqli_stmt_bind_param( $statement, "s", $client_file );
 mysqli_stmt_execute( $statement );
 
-mysqli_stmt_bind_result( $statement, $count );
+mysqli_stmt_bind_result( $statement, $result );
 mysqli_stmt_fetch( $statement );
+
+$count = mysqli_stmt_num_rows( $statement );
+echo "Count: " . $count . "\n";
+echo "Result: " . print_r( $result ) . "\n";
 
 mysqli_stmt_close( $statement );
 
@@ -54,8 +59,10 @@ if ( $count == 0 ) {
 
 	mysqli_stmt_close( $statement );
 } else if ( $count == 1 ) {
-	// WE NEED TO REPLACE FILE
-	// update according to dates
+	// WE NEED TO REPLACE FILE ( uploaded should be newer )
+	// update according to date
+
+
 } else {
 	die( "How did that happen?" );
 }
