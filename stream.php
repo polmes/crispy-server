@@ -1,7 +1,7 @@
 <?php
 
 set_time_limit(0);
-header( 'Content-Type: text/event-stream' );
+// header( 'Content-Type: text/event-stream' );
 
 while ( true ) {
 	echo "data:" . date("Y-m-d H:i:s") . "\n\n";
