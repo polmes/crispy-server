@@ -1,0 +1,6 @@
+FILES="$@" # get all arguments
+echo "Watching:" $FILES
+while true; do
+	inotifywait -qq $FILES # -e modify,attrib,close_write,move,create,delete
+	echo "update"
+done
